@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+@plugin "daisyui";
+
+:root {
+  --bg-deep: #05131f;
+  --bg-mid: #0d2538;
+  --card: rgba(255, 255, 255, 0.78);
+  --card-border: rgba(255, 255, 255, 0.45);
+  --text-main: #0f2232;
+  --text-soft: #4d5f72;
+  --brand: #0e7490;
+  --brand-dark: #0b5469;
+  --accent: #f97316;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  color: var(--text-main);
+  background:
+    linear-gradient(rgba(5, 19, 31, 0.55), rgba(5, 19, 31, 0.55)),
+    url('/bg.jpg'),
+    radial-gradient(circle at 15% 20%, rgba(57, 189, 248, 0.22), transparent 30%),
+    radial-gradient(circle at 85% 80%, rgba(249, 115, 22, 0.18), transparent 36%),
+    linear-gradient(135deg, var(--bg-deep), var(--bg-mid));
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.app-shell {
+  position: relative;
+}
+
+.glass-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 24px 60px rgba(2, 17, 28, 0.35);
+}
+
+.fade-up {
+  animation: fadeUp 0.35s ease-out;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(13, 37, 56, 0.45);
+  border-radius: 999px;
+}
