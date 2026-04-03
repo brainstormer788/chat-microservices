@@ -11,6 +11,7 @@ const allowedOrigins = (process.env.ALLOWED_ORIGINS || "http://localhost:5173,ht
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
+const allowedOriginSet = new Set(allowedOrigins);
 
 const corsOptions = {
   origin(origin, callback) {
@@ -23,9 +24,45 @@ const corsOptions = {
   credentials: true
 };
 
+const normalizeRequestOrigin = (value) => {
+  if (!value) {
+    return null;
+  }
+
+  try {
+    return new URL(value).origin;
+  } catch {
+    return null;
+  }
+};
+
+const enforceTrustedBrowserOrigin = (req, res, next) => {
+  if (!["POST", "PUT", "PATCH", "DELETE"].includes(req.method)) {
+    return next();
+  }
+
+  const requestOrigin =
+    normalizeRequestOrigin(req.headers.origin) ||
+    normalizeRequestOrigin(req.headers.referer);
+
+  if (!requestOrigin || !allowedOriginSet.has(requestOrigin)) {
+    return res.status(403).json({ message: "Untrusted request origin" });
+  }
+
+  return next();
+};
+
 app.set("trust proxy", 1);
+app.disable("x-powered-by");
+app.use((req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  next();
+});
 app.use(cors(corsOptions))
-app.use(express.json())
+app.use(express.json({ limit: "10kb" }))
+app.use(enforceTrustedBrowserOrigin);
 app.use("/api/auth",authRoutes)
 app.get("/", (req, res) => {
   res.send("Auth Service Running");

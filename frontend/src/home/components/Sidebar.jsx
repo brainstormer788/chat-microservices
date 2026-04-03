@@ -58,13 +58,12 @@ const Sidebar = ({ onSelectUser }) => {
 
     setLoading(true);
     try {
-      const usersRes = await api.get(`/api/users`);
-      const searchTerm = searchInput.toLowerCase();
-      const data = (Array.isArray(usersRes.data) ? usersRes.data : []).filter((user) => {
-        const name = user?.name?.toLowerCase?.() || "";
-        const email = user?.email?.toLowerCase?.() || "";
-        return user?._id !== authUser?._id && (name.includes(searchTerm) || email.includes(searchTerm));
+      const usersRes = await api.get("/api/users", {
+        params: { q: searchInput.trim() }
       });
+      const data = (Array.isArray(usersRes.data) ? usersRes.data : []).filter(
+        (user) => user?._id !== authUser?._id
+      );
       if (data.length === 0) {
         toast.info("User not found");
         setSearchuser([]);
@@ -142,7 +141,7 @@ const Sidebar = ({ onSelectUser }) => {
           onChange={(e) => setSearchInput(e.target.value)}
           type="text"
           className="h-10 flex-1 rounded-xl bg-slate-100 px-4 text-sm outline-none focus:ring-2 focus:ring-cyan-700/40"
-          placeholder="Search by name or email"
+          placeholder="Search by name"
         />
         <button className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-700 text-white transition hover:bg-cyan-800">
           <FaSearch />
@@ -206,7 +205,6 @@ const Sidebar = ({ onSelectUser }) => {
 
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-bold text-slate-800">{user.name}</p>
-                  <p className="truncate text-xs text-slate-500">{user.email}</p>
                 </div>
 
                 {isUnread && <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-xs font-bold text-white">+1</span>}
