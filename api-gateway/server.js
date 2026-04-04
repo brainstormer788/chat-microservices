@@ -33,6 +33,11 @@ app.use((req, res, next) => {
 });
 app.use(cors(corsOptions));
 
+const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || "http://localhost:5001";
+const USER_SERVICE_URL = process.env.USER_SERVICE_URL || "http://localhost:5002";
+const MESSAGE_SERVICE_URL = process.env.MESSAGE_SERVICE_URL || "http://localhost:5003";
+const CHAT_SERVICE_URL = process.env.CHAT_SERVICE_URL || "http://localhost:5004";
+
 const buildServiceProxy = (serviceBasePath, target) =>
   createProxyMiddleware({
     target,
@@ -58,7 +63,7 @@ const buildServiceProxy = (serviceBasePath, target) =>
 app.use(
   "/socket.io",
   createProxyMiddleware({
-    target: "http://localhost:5004",
+    target: CHAT_SERVICE_URL,
     changeOrigin: true,
     xfwd: true,
     ws: true,
@@ -71,21 +76,21 @@ app.use(
 // AUTH SERVICE
 app.use(
   "/api/auth",
-  buildServiceProxy("/api/auth", "http://localhost:5001")
+  buildServiceProxy("/api/auth", AUTH_SERVICE_URL)
 );
 
 
 // USER SERVICE
 app.use(
   "/api/users",
-  buildServiceProxy("/api/users", "http://localhost:5002")
+  buildServiceProxy("/api/users", USER_SERVICE_URL)
 );
 
 
 // MESSAGE SERVICE
 app.use(
   "/api/messages",
-  buildServiceProxy("/api/messages", "http://localhost:5003")
+  buildServiceProxy("/api/messages", MESSAGE_SERVICE_URL)
 );
 
 
